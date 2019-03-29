@@ -12,8 +12,9 @@
   <a href="http://localhost:8082/echarts/bing.jsp">饼图示例</a>
   <a href="http://localhost:8082/echarts/zhe.jsp">折线图示例</a>
   <a href="http://localhost:8082/echarts/ajax1.jsp">异步数据加载示例</a>
+  <a href="http://localhost:8082/echarts/data">请求json数据</a>
 
-  <a href="http://localhost:8082/echarts/data.do">请求json数据</a>
+  <a href="http://localhost:8082/file/daoru.jsp">导入excel</a>
 
 
   <script type="text/javascript">

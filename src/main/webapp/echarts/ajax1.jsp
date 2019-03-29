@@ -40,7 +40,7 @@
 
     $(function () {
         $.ajax({
-            url: "http://localhost:8082/echarts/data.do",
+            url: "http://localhost:8082/echarts/data",
             type: "get",
             dataType: "json",
             async: false,

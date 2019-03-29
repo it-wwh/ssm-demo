@@ -16,7 +16,7 @@ import java.util.Map;
 @RequestMapping("/echarts")
 public class EChartsController {
 
-    @RequestMapping(value = "/data.do", method = {RequestMethod.GET})
+    @RequestMapping(value = "/data", method = {RequestMethod.GET})
     @ResponseBody
     public Object returnData(HttpServletRequest request) {
         List<UserPojo> list = new ArrayList<UserPojo>();
