@@ -1,6 +1,8 @@
 package com.controller;
 
 import com.beans.UserPojo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +17,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/echarts")
 public class EChartsController {
+    private static final Log logger = LogFactory.getLog(LogFactory.class);
+
 
     @RequestMapping(value = "/data", method = {RequestMethod.GET})
     @ResponseBody
@@ -43,6 +47,8 @@ public class EChartsController {
         map.put("name", names);
         map.put("age", ages);
         map.put("list", list);
+
+        logger.info("请求json数据:" + map);
 
         return map;
     }
