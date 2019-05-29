@@ -18,14 +18,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/file")
@@ -33,6 +34,63 @@ public class FileAction extends BaseController {
 
     private static final Log logger = LogFactory.getLog(FileAction.class);
     private static Map<String, Object> map = new HashMap<String, Object>();
+
+    /**
+     * 文件上传
+     */
+    @RequestMapping("fileUpload")
+    @ResponseBody
+    public Map<String, Object> fileUpload(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        long startTime = System.currentTimeMillis();
+
+        //将当前上下文初始化给  CommonsMutipartResolver （多部分解析器）
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+
+        //检查form中是否有enctype="multipart/form-data"
+        if (multipartResolver.isMultipart(request)) {
+            //将request变成多部分request
+            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+            //获取multiRequest 中所有的文件名
+            Iterator iter = multiRequest.getFileNames();
+
+            while (iter.hasNext()) {
+                //一次遍历所有文件
+                MultipartFile multipartFile = multiRequest.getFile(iter.next().toString());
+                if (multipartFile != null) {
+                    String pathString = request.getSession().getServletContext().getRealPath("/");
+                    String basePath = "static/resource/upload/";
+                    // 转换为file
+                    String path = pathString + basePath + multipartFile.getOriginalFilename();
+                    //上传
+                    try {
+                        File file = new File(path);
+                        if (!file.exists()) {
+                            // 先得到文件的上级目录，并创建上级目录，在创建文件
+                            file.getParentFile().mkdirs();
+                            file.createNewFile();
+                        }
+                        multipartFile.transferTo(file);
+                    } catch (IOException e) {
+                        resultMap.put("flag", "error");
+                        resultMap.put("message", "文件上传失败!");
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            long endTime = System.currentTimeMillis();
+            logger.info("文件上传所用时间：" + String.valueOf(endTime - startTime) + "ms");
+
+            resultMap.put("flag", "success");
+            resultMap.put("message", "文件上传成功");
+        } else {
+            resultMap.put("flag", "error");
+            resultMap.put("message", "文件上传失败,检查form中是否有enctype=multipart/form-data");
+        }
+
+        return resultMap;
+    }
 
     /**
      * 下载excel模板
@@ -210,6 +268,7 @@ public class FileAction extends BaseController {
 
     /**
      * 显示excel文档接口内容接口
+     *
      * @return
      * @throws Exception
      */
